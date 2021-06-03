@@ -1,0 +1,11 @@
+#app {
+    --background-color-primary: #FFFFFF;
+    --background-color-secondary: #4287f5;
+    --background-color-trimary: #838383;
+    --accent-color: #0a51c2;
+    --accent-color-hover: #89D5D2;
+    --accent-color-selected: #008080;
+    --secondary-accent-color: #5a5a5a;
+    --secondary-accent-color-hover: #9c9c9c;
+    --secondary-accent-color-selected: #464646;
+}

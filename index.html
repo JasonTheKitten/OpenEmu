@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>OpenEmu</title>
+
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <meta name="description" content="OpenEmu is a web-based emulator and IDE for OpenComputers"/>
+
+        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300&family=Roboto:wght@100;300&display=swap" rel="stylesheet">
+        <link href="styles/app.css" rel="stylesheet" type="text/css"/>
+
+
+        <script src="scripts/lib/ace/ace.js" defer></script>
+        <script src="scripts/lib/ace/mode-lua.js" defer></script>
+        <script src="scripts/lib/ace/keybinding-vim.js" defer></script>
+        <script src="scripts/lib/ace/ext-language_tools.js" defer></script>
+        <script src="scripts/lib/ace/ext-searchbox.js" defer></script>
+
+        <script src="scripts/lib/jszip/jszip.min.js" defer></script>
+        <script src="scripts/lib/lua53/lua.js" defer></script>
+
+        <script src="scripts/loader.js" defer></script>
+
+        <script src="scripts/aceinstance.js" defer></script>
+        <script src="scripts/lua.js" defer></script>
+        <script src="scripts/luahelper.js" defer></script>
+        <script src="scripts/filesystem/zipfs.js"></script>
+        <script src="scripts/loot.js" defer></script>
+        <script src="scripts/component/eeprom.js" defer></script>
+        <script src="scripts/component/disk.js" defer></script>
+        <script src="scripts/component/computer.js" defer></script>
+        <script src="scripts/component/gpu.js" defer></script>
+        <script src="scripts/component/screen.js" defer></script>
+        <script src="scripts/apis/computer.js" defer></script>
+        <script src="scripts/apis/component.js" defer></script>
+        <script src="scripts/apis/system.js" defer></script>
+        <script src="scripts/apis/unicode.js" defer></script>
+        <script src="scripts/lua53arch.js" defer></script>
+        <script src="scripts/code.js" defer></script>
+        <script src="scripts/terminal.js" defer></script>
+        <script src="scripts/computer.js" defer></script>
+        <script src="scripts/main.js" defer></script>
+    </head>
+    <body>
+        <div id="app">
+            <div id="launcher-view" style="display:none;">
+                <div id="launcher-sidebar">
+                    <button class="form-control ls-item form-control-active" title="Quickstart">
+                        Q
+                    </button>
+                    <button class="form-control ls-item form-control-active" title="All">
+                        A+
+                    </button>
+                    <button class="form-control ls-item form-control-active" title="Info">
+                        I?
+                    </button>
+                </div>
+                <div id="launcher-container">
+                    <div id="launcher-title">
+                        Workspace Select
+                    </div>
+                </div>
+            </div>
+            <div id="workspace-view">
+                <div id="sideview-picker">
+                    <button class="form-control-secondary sideview-picker-item form-control-secondary-active" title="Quick Picker">
+                        QP
+                    </button>
+                    <button class="form-control-secondary sideview-picker-item" title="Filesystem">
+                        FS
+                    </button>
+                    <button class="form-control-secondary sideview-picker-item" title="Plugins">
+                        P+
+                    </button>
+                </div>
+                <div id="sidenav">
+                    <button class="form-control sidenav-item form-control-active">
+                        Monitor 1
+                    </button>
+                    <button class="form-control sidenav-item">
+                        New Quick Setup
+                    </button>
+                </div>
+                <div id="device-container">
+                    <div class="header">
+                        Like this project? Give it a <a href="https://github.com/JasonTheKitten/OpenEmu" target="_blank" rel="noopener">star</a>!
+                        For a CC emulator, check out <a href="https://jasonthekitten.github.io/Mimic/" target="_blank" rel="noopener">my fork of GravityScore's Mimic</a>.
+                    </div>
+                    <div class="header header-discord">
+                        Consider joining the <a href="https://discord.gg/bYqKv7h" target="_blank" rel="noopener">TIS-3D</a>
+                        and/or <a href="https://discord.gg/H2UyJXe" target="_blank" rel="noopener">Minecraft Computer Mods</a> Discord servers.
+                    </div>
+                    <div class="header header-internet-warning">
+                        Security Advisory: Any internet features are routed through unmonitered proxies. Please GPG encrypt any sensitive
+                        incoming/outgoing data using an externally established key to prevent tampering or theft.
+                    </div>
+                    <div id="monitor-container">
+                        <div style="align-self: flex-start;"></div>
+                        <canvas id="monitor">Your browser must support Javascript!</canvas>
+                        <div style="align-self: flex-end;"></div>
+                    </div>
+                    <div id="keyboard-container-mini">
+                        + Keyboard
+                    </div>
+                </div>
+                <div id="editor-container" style="display:none;">
+                </div>
+            </div>
+        </div>
+        <img id="font" src="resources/ocfont.png" alt="Ignore Me" style="display: none;";/>
+    </body>
+</html>

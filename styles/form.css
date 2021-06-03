@@ -1,0 +1,27 @@
+button {
+    all:unset;
+    padding: 1em;
+}
+
+/*.form-control {
+    background-color: var(--accent-color);
+}*/
+.form-control-active {
+    background-color: var(--accent-color);
+}
+.form-control:hover {
+    background-color: var(--accent-color-hover);
+}
+.form-control:active {
+    background-color: var(--accent-color-selected);
+}
+
+.form-control-secondary-active {
+    background-color: var(--secondary-accent-color);
+}
+.form-control-secondary:hover {
+    background-color: var(--secondary-accent-color-hover);
+}
+.form-control-secondary:active {
+    background-color: var(--secondary-accent-color-selected);
+}
