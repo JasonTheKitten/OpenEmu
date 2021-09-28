@@ -27,3 +27,9 @@ EEPROM.prototype.getMethods = function(computer) {
 
     return methods;
 }
+
+EEPROM.prototype.getMethodInfo = function() {
+    return {
+        
+    };
+}

@@ -12,7 +12,7 @@ Computer.prototype.getAddress = function() {
 
 Computer.prototype.getMethods = function(computer) {
     let methods = {}
-
+    
     methods["beep"] = function(l) {
         let freq = 500;
         let dur = .2;
@@ -30,7 +30,18 @@ Computer.prototype.getMethods = function(computer) {
         osc.connect(ctx.destination);
         osc.start();
         osc.stop(ctx.currentTime+dur);
+
+        let time = Date.now();
+        while (Date.now() - time < dur*1000);
     }
 
     return methods;
+}
+
+Computer.prototype.getMethodInfo = function() {
+    return {
+        ["beep"]: {
+            doc: "function([frequency:string or number[, duration:number]]) -- Plays a tone, useful to alert users via audible feedback."
+        }
+    };
 }

@@ -30,7 +30,7 @@ let ComponentAPI = (function() {
                 filter = l.getStringParameter(1);
 
                 if (l.isBooleanParameter(2)) {
-                    strict = l.getBooleanParameter(i);
+                    strict = l.getBooleanParameter(2);
                 }
             }
 
@@ -38,47 +38,15 @@ let ComponentAPI = (function() {
             for (let i=0; i<rawComponents.length; i++) {
                 let rawComponent = rawComponents[i];
                 let name = rawComponent.getName();
+                if (name == null) {
+                    continue;
+                }
                 if (!strict&&name.includes(filter) || name===filter || filter=="") {
                     components[rawComponent.getAddress()] = name;
                 }
             }
 
             return [components];
-        }
-
-        // TODO: Stuff in between
-
-        methods["methods"] = function(l) {
-            let addr = l.getStringParameter(1);
-            let device = getDevice(computer, addr);
-
-            let m = {};
-
-            for (method in device.getMethods(computer)) {
-                m[method] = {
-                    direct: false,
-                    getter: false,
-                    setter: false
-                }
-            }
-
-            return [m];
-        }
-
-        methods["invoke"] = function(l) {
-            let addr = l.getStringParameter(1);
-            let method = l.getStringParameter(2);
-            let args = l.chop(3);
-
-            //console.log(method)
-
-            let device = getDevice(computer, addr);
-            let methodF = device.getMethods(computer)[method];
-            if (methodF == undefined) {
-                throw "no such method";
-            }
-
-            return [true].concat(methodF(args)||[]);
         }
 
         methods["type"] = function(l) {
@@ -92,6 +60,62 @@ let ComponentAPI = (function() {
         methods["slot"] = function(l) {
             //TODO
             return [-1, 1];
+        }
+
+        methods["methods"] = function(l) {
+            let addr = l.getStringParameter(1);
+            let device = getDevice(computer, addr);
+
+            let methodInfo = device.getMethodInfo();
+            
+            let m = {};
+            for (method in device.getMethods(computer)) {
+                if (!methodInfo[method]) {
+                    //console.warn("No method info for method: "+method)
+                    m[method] = {
+                        direct: true,
+                        getter: false,
+                        setter: false
+                    }
+                } else {
+                    m[method] = {
+                        direct: methodInfo[method].direct || false,
+                        getter: false,
+                        setter: false
+                    }
+                }
+            }
+
+            return [m];
+        }
+
+        methods["invoke"] = function(l) {
+            let addr = l.getStringParameter(1);
+            let method = l.getStringParameter(2);
+            let args = l.chop(3);
+
+            let device = getDevice(computer, addr);
+            let methodF = device.getMethods(computer)[method];
+            if (methodF == undefined) {
+                throw "no such method";
+            }
+
+            let methodInfo = device.getMethodInfo()[method];
+            if (!methodInfo) {
+                methodInfo = {direct: true};
+                console.warn("No method info for method: "+method)
+            }
+            if (computer.isResumed() && methodInfo.direct) {
+                if (!computer.reduceCallBudget(1/(methodInfo.limit || 100))) {
+                    return [];
+                }
+            }
+
+            return [true].concat(methodF(args)||[]);
+        }
+
+        methods["doc"] = function(l) {
+            console.log("Method not implemented");
         }
 
         return methods;

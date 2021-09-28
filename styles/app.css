@@ -119,6 +119,10 @@ html, body, #app,
     background-color: #e22929;
 }
 
+.header-sound-help {
+    background-color: #ca710a;
+}
+
 #keyboard-container-mini {
     flex-grow: 0;
     background-color: var(--background-color-trimary);
@@ -130,6 +134,7 @@ html, body, #app,
     /*width: 75%;
     height: 75%;*/
     flex-grow: 0;
+    /*border-radius: 10px;*/
 }
 
 #monitor-container {

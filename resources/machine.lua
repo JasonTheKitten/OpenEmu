@@ -1353,6 +1353,7 @@ libcomponent = {
 sandbox.component = libcomponent
 
 local libcomputer = {
+  debug = computer.debug,
   isRobot = computer.isRobot,
   address = computer.address,
   tmpAddress = computer.tmpAddress,

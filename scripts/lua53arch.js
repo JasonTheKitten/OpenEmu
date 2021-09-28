@@ -1,37 +1,65 @@
 let Lua53arch = (function() {
     function Lua53arch(computer) {
         this.computer = computer;
+        this.signalQueue = [];
+        this.registered = [];
+        this.resumed = false;
     }
 
     Lua53arch.prototype.init = function() {
+        this.register(new ComputerAPI());
+        this.register(new ComponentAPI());
+        this.register(new SystemAPI());
+        this.register(new UnicodeAPI());
+
         this.lua = new Lua53();
-        this.coroutine = this.lua.createCoroutine("=machine.lua", code.machine);
-        let keys = Object.keys(Lua53arch.registered);
+        let keys = Object.keys(this.registered);
 
         for (key in keys) {
             this.lua.setGlobal(
                 keys[key],
-                luaHelper.toLuaValue(this.lua, Lua53arch.registered[keys[key]].getMethods(this.computer)));
+                luaHelper.toLuaValue(this.lua, this.registered[keys[key]].getMethods(this.computer, this)));
         }
+
+        this.coroutine = this.lua.createCoroutine("=machine.lua", code.machine);
     }
 
+    let i = 0;
     Lua53arch.prototype.tick = function() {
         //TODO: Better resemble the actual Scala code for OC
-        if (this.lua==undefined || this.coroutine==undefined) return;
-        if (this.argsn == 0) {
-            this.argsn = ["init"];
+        if (this.lua == undefined || this.coroutine == undefined) {
+            return;
         }
-        let result = this.coroutine.resume(this.argsn);
-        this.argsn = 0;
+
+        let signal = [];
+        if (this.signalQueue.length > 0) {
+            signal = this.signalQueue[this.signalQueue.length-1];
+            this.signalQueue.length--;
+        }
+        
+        this.resumed = true;
+        let result = this.coroutine.resume(signal);
+        this.resumed = false;
+
         if (!result[0]) {
-            console.log(result[1]);
+            console.log("ERROR: "+result[1]);
             this.exit();
         } else {
             //TODO: Check # of results
             if (result[1].isFunction(1)) {
-                this.argsn = result[1].invoke(1);
+                this.signalQueue[this.signalQueue.length] = [1, result[1].invoke(1)];
+            } else if (result[1].isBoolean(1)) {
+                let reboot = result[1].getBoolean(1);
+                this.computer.off()
+                if (reboot) {
+                    this.computer.on()
+                }
             }
         }
+    }
+
+    Lua53arch.prototype.queueSignal = function(signal) {
+        this.signalQueue.splice(0, 0, [0, signal]);
     }
 
     Lua53arch.prototype.exit = function() {
@@ -40,15 +68,9 @@ let Lua53arch = (function() {
         this.coroutine = undefined;
     }
 
-    Lua53arch.registered = {};
-    Lua53arch.register = function(value) {
-        Lua53arch.registered[value.getName()] = value;
+    Lua53arch.prototype.register = function(value) {
+        this.registered[value.getName()] = value;
     }
-
-    Lua53arch.register(new ComputerAPI());
-    Lua53arch.register(new ComponentAPI());
-    Lua53arch.register(new SystemAPI());
-    Lua53arch.register(new UnicodeAPI());
 
     return Lua53arch;
 })();

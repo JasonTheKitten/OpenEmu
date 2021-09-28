@@ -26,12 +26,16 @@
         <script src="scripts/lua.js" defer></script>
         <script src="scripts/luahelper.js" defer></script>
         <script src="scripts/filesystem/zipfs.js"></script>
+        <script src="scripts/filesystem/tempfs.js"></script>
         <script src="scripts/loot.js" defer></script>
+        <script src="scripts/sound.js" defer></script>
+        <script src="scripts/keys.js" defer></script>
         <script src="scripts/component/eeprom.js" defer></script>
         <script src="scripts/component/disk.js" defer></script>
         <script src="scripts/component/computer.js" defer></script>
         <script src="scripts/component/gpu.js" defer></script>
         <script src="scripts/component/screen.js" defer></script>
+        <script src="scripts/component/keyboard.js" defer></script>
         <script src="scripts/apis/computer.js" defer></script>
         <script src="scripts/apis/component.js" defer></script>
         <script src="scripts/apis/system.js" defer></script>
@@ -95,9 +99,12 @@
                         Security Advisory: Any internet features are routed through unmonitered proxies. Please GPG encrypt any sensitive
                         incoming/outgoing data using an externally established key to prevent tampering or theft.
                     </div>
+                    <div class="header header-sound-help">
+                        Sound not working? Hold CTRL+R to refresh the page, and click the page before the computer boots.
+                    </div>
                     <div id="monitor-container">
                         <div style="align-self: flex-start;"></div>
-                        <canvas id="monitor">Your browser must support Javascript!</canvas>
+                        <canvas id="monitor" tabindex="1">Your browser must support Javascript!</canvas>
                         <div style="align-self: flex-end;"></div>
                     </div>
                     <div id="keyboard-container-mini">

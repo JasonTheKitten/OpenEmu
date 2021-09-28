@@ -11,49 +11,48 @@ let Lua53 = (function() {
     }
 
     CoroutineResult.prototype.isFunction = function(i) {
-        return lua53_m.ccall("lua_type", n, [n, n], [this.thread, this.bottom+i])==6;
+        return lua53_m.ccall("lua_type", n, [n, n], [this.thread, this.bottom+i]) === 6;
     }
 
     CoroutineResult.prototype.invoke = function() {
         // TODO: Find a better way to represent functions
-        lua53_m.ccall("lua_callk", null, [n, n, n, n, n], [this.thread, 0, -1, 0, 0])==0;
-        /*let b = lua53_m.ccall("lua_pcallk", n, [n, n, n, n, n, n], [this.thread, 0, -1, 0, 0, 0])==0;
-        lua53_m.ccall("lua_pushboolean", null, [n, n], [this.thread, b]);*/
+        lua53_m.ccall("lua_callk", null, [n, n, n, n, n], [this.thread, 0, -1, 0, 0]) == 0;
         let diff = lua53_m.ccall("lua_gettop", n, [n], [this.thread]) - this.bottom;
-        //if (diff>1) lua53_m.ccall("lua_rotate", null, [n, n, n], [this.thread, this.bottom+1, 1]);
         return diff;
+    }
+
+    CoroutineResult.prototype.isBoolean = function(i) {
+        return lua53_m.ccall("lua_type", n, [n, n], [this.thread, this.bottom+i]) === 1;
+    }
+
+    CoroutineResult.prototype.getBoolean = function(i) {
+        return lua53_m.ccall("lua_toboolean", n, [n, n], [this.thread, this.bottom+i]) === 1;
     }
 
     let Coroutine = function(thread) {
         this.thread = thread;
-        this.bottom = lua53_m.ccall("lua_gettop", n, [n], [this.thread])-1;
-        this.second = false;
     }
+    
     Coroutine.prototype.resume = function(args) {
-        let argsa;
-        if (typeof args === "object") {
-            argsa=["init"];
-            args=undefined;
-        }
-        args = args || 0;
-
-        if (this.second) lua53_m.ccall("lua_settop", null, [n, n], [this.thread, this.bottom+args])
-        this.second = true;
-
-        if (argsa) {
-            new Lua53(this.thread).createString(argsa[0]).push();
-            args=1;
+        let argsn = 0;
+        if (args[0] == 0) {
+            lua53_m.ccall("lua_settop", n, [n], [0])
+            for (i = 0; i < args[1].length; i++) {
+                luaHelper.toLuaValue(new Lua53(this.thread), args[1][i]).push();
+            }
+            argsn = args[1].length;
+        } else if (args[0] == 1) {
+            argsn = args[1];
         }
 
-        let status = lua53_m.ccall("lua_resume", n, [n, n, n], [this.thread, 0, args]);
-        if (status!==0&&status!==1) {
+        let status = lua53_m.ccall("lua_resume", n, [n, n, n], [this.thread, 0, argsn]);
+        if (status !== 0 && status !== 1) {
             return [false, lua53_m.ccall("lua_tolstring", s, [n, n], [this.thread, -1])];
         }
 
-        let top = lua53_m.ccall("lua_gettop", n, [n], [this.thread]);
-
-        return [true, new CoroutineResult(this.thread, this.bottom)];
+        return [true, new CoroutineResult(this.thread, 0)];
     }
+
     Coroutine.prototype.getRawLua = function() {
         return new Lua53(this.thread);
     }
@@ -73,7 +72,8 @@ let Lua53 = (function() {
     }
 
     String.prototype.push = function() {
-        lua53_m.ccall("lua_pushlstring", null, [n, s, n], [this.lua, this.string, this.string.length]);
+        let len = new TextEncoder().encode(this.string).length;
+        lua53_m.ccall("lua_pushlstring", null, [n, s, n], [this.lua, this.string, len]);
     }
 
     function Table(lua) {
@@ -142,23 +142,27 @@ let Lua53 = (function() {
     }
 
     FunctionArgs.prototype.isStringParameter = function(i) {
-        return lua53_m.ccall("lua_type", n, [n, n], [this.lua, this._chop+i])===4;
+        return lua53_m.ccall("lua_type", n, [n, n], [this.lua, this._chop+i]) === 4;
     }
 
     FunctionArgs.prototype.getBooleanParameter = function(i) {
-        return lua53_m.ccall("lua_toboolean", null, [n, n], [this.lua, this._chop+i])===1;
+        return lua53_m.ccall("lua_toboolean", n, [n, n], [this.lua, this._chop+i]) === 1;
     }
 
     FunctionArgs.prototype.isBooleanParameter = function(i) {
-        return lua53_m.ccall("lua_type", n, [n, n], [this.lua, this._chop+i])===1;
+        return lua53_m.ccall("lua_type", n, [n, n], [this.lua, this._chop+i]) === 1;
     }
 
     FunctionArgs.prototype.getIntegerParameter = function(i) {
-        return lua53_m.ccall("luaL_checkinteger", n, [n, n], [this.lua, this._chop+i]);
+        if (this.isIntegerParameter(i)) {
+            return lua53_m.ccall("luaL_checkinteger", n, [n, n], [this.lua, this._chop+i]);
+        } else {
+            return Math.floor(lua53_m.ccall("luaL_checknumber", n, [n, n], [this.lua, this._chop+i]));
+        }
     }
 
     FunctionArgs.prototype.isIntegerParameter = function(i) {
-        return lua53_m.ccall("lua_isinteger", n, [n, n], [this.lua, this._chop+i])===1;
+        return lua53_m.ccall("lua_isinteger", n, [n, n], [this.lua, this._chop+i]) === 1;
     }
 
     FunctionArgs.prototype.getNumberParameter = function(i) {
@@ -166,7 +170,16 @@ let Lua53 = (function() {
     }
 
     FunctionArgs.prototype.isNumberParameter = function(i) {
-        return lua53_m.ccall("lua_isnumber", n, [n, n], [this.lua, this._chop+i])===1;
+        return lua53_m.ccall("lua_isnumber", n, [n, n], [this.lua, this._chop+i]) === 1;
+    }
+
+    FunctionArgs.prototype.getNumParameters = function(i) {
+        return lua53_m.ccall("lua_gettop", n, [n], [this.lua]) - this._chop;
+    }
+
+    FunctionArgs.prototype.debug = function(i) {
+        lua53_m.ccall("luaL_traceback", n, [n, n, n, n], [this.lua, this.lua, 0, 1]);
+        console.log(lua53_m.ccall("luaL_checklstring", s, [n, n], [this.lua, -1]));
     }
 
     FunctionArgs.prototype.chop = function(i) {
@@ -213,6 +226,7 @@ let Lua53 = (function() {
             throw "Failed to create coroutine!";
         }
         this.thread = thread;
+
         lua53_m.ccall("luaL_openlibs", null, [n], [thread]);
         lua53_m.ccall("luaL_loadbufferx", null, [n, s, n, s], [thread, code, code.length, name]);
         return new Coroutine(thread);

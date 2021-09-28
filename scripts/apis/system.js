@@ -9,12 +9,16 @@ SystemAPI.prototype.getName = function() {
 SystemAPI.prototype.getMethods = function() {
     let methods = {};
 
-    methods["timeout"] = function(l) {
-        return [3]
-    }
-
     methods["allowBytecode"] = function(l) {
         return [true];
+    }
+
+    methods["allowGC"] = function(l) {
+        return [true];
+    }
+
+    methods["timeout"] = function(l) {
+        return [5]
     }
 
     return methods;

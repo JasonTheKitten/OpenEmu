@@ -1,7 +1,9 @@
 let luaHelper = {}
 
 luaHelper.toLuaValue = function(lua, object) {
-    if (typeof object == "object" && Array.isArray(object)) {
+    if (object === null || object === undefined) {
+        return lua.createNil();
+    } else if (Array.isArray(object)) {
         let table = lua.createOrderedTable();
 
         for (let i=0; i<object.length; i++) {
@@ -27,8 +29,6 @@ luaHelper.toLuaValue = function(lua, object) {
         return lua.createString(object);
     } else if (typeof object == "boolean") {
         return lua.createBoolean(object);
-    } else if (object === undefined) {
-        return lua.createNil();
     }
 
     // Something has gone drastically wrong, and we have to back out
@@ -38,4 +38,30 @@ luaHelper.toLuaValue = function(lua, object) {
     return lua.createNil();
 
     //TODO: Support other values
+}
+
+luaHelper.argumentToJSObject = function(l, i) {
+    if (l.isStringParameter(i)) {
+        return l.getStringParameter(i);
+    } else if (l.isBooleanParameter(i)) {
+        return l.getBooleanParameter(i);
+    } else if (l.isIntegerParameter(i)) {
+        return l.getIntegerParameter(i);
+    } if (l.isNumberParameter(i)) {
+        return l.getNumberParameter(i);
+    } else {
+        alert("Unsupported type!");
+        return null;
+    }
+
+    // TODO: Support tables
+}
+
+luaHelper.argumentsToJSObjects = function(l, n, off) {
+    let objects = [];
+    for (i = 0; i < n; i++) {
+        objects[i] = luaHelper.argumentToJSObject(l, i + off + 1);
+    }
+
+    return objects;
 }
