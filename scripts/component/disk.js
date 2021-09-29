@@ -50,6 +50,10 @@ Disk.prototype.getMethods = function(computer) {
         let c = self.filesystem.read(handleID, len);
 
         //console.log(c);
+
+        if (c instanceof Uint8Array) {
+            return [c.length==0?undefined:c];
+        }
         
         return [c===""?undefined:c];
     }
@@ -106,6 +110,17 @@ Disk.prototype.getMethods = function(computer) {
         }
 
         //TODO: Error if fail
+    }
+
+    methods["size"] = function(l) {
+        let path = l.getStringParameter(1);
+
+        let size = self.filesystem.getSize(path);
+        if (size == -1) {
+            //TODO
+        }
+        
+        return [size];
     }
 
     methods["getLabel"] = function(l) {

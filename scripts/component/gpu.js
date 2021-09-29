@@ -14,8 +14,17 @@ function fromColor(color) {
     return (color[0]*256+color[1])*256+color[2];
 }
 
+function fromPalette(color, palette) {
+    return palette[color];
+}
+
 function GPU() {
-    
+    this.palette = [
+        0xFFFFFF, 0xFFCC33, 0xCC66CC, 0x6699FF,
+        0xFFFF33, 0x33CC33, 0xFF6699, 0x333333,
+        0xCCCCCC, 0x336699, 0x9933CC, 0x333399,
+        0x663300, 0x336600, 0xFF3333, 0x000000
+    ]
 }
 
 GPU.prototype.getName = function() {
@@ -45,13 +54,18 @@ GPU.prototype.getMethods = function(computer) {
     }
 
     methods["getBackground"] = function(l) {
-        return [0];
+        let screen = computer.getComponentByAddress(self.screen);
+        let oldColor = fromColor(screen.getBackground());
+
+        return [oldColor];
     }
 
     methods["setBackground"] = function(l) {
         //TODO: Check if screen bound
-
         let color = l.getIntegerParameter(1);
+        if (l.isBooleanParameter(2) && l.getBooleanParameter(2)) {
+            color = fromPalette(color, self.palette);
+        }
 
         let screen = computer.getComponentByAddress(self.screen);
         let oldColor = fromColor(screen.getBackground());
@@ -61,11 +75,17 @@ GPU.prototype.getMethods = function(computer) {
     }
 
     methods["getForeground"] = function(l) {
-        return [0];
+        let screen = computer.getComponentByAddress(self.screen);
+        let oldColor = fromColor(screen.getForeground());
+
+        return [oldColor];
     }
 
     methods["setForeground"] = function(l) {
         let color = l.getIntegerParameter(1);
+        if (l.isBooleanParameter(2) && l.getBooleanParameter(2)) {
+            color = fromPalette(color, self.palette);
+        }
 
         let screen = computer.getComponentByAddress(self.screen);
         let oldColor = fromColor(screen.getForeground());
@@ -74,12 +94,17 @@ GPU.prototype.getMethods = function(computer) {
         return [oldColor];
     }
 
-    methods["getPalleteColor"] = function(l) {
-        return [0];
+    methods["getPaletteColor"] = function(l) {
+        let index = l.getIntegerParameter(1);
+
+        return [self.palette[index]];
     }
 
-    methods["setPalleteColor"] = function(l) {
-        
+    methods["setPaletteColor"] = function(l) {
+        let index = l.getIntegerParameter(1);
+        let color = l.getIntegerParameter(2);
+
+        self.palette[index] = color;
     }
 
     methods["getDepth"] = function(l) {
@@ -112,7 +137,8 @@ GPU.prototype.getMethods = function(computer) {
     }
 
     methods["getViewport"] = function(l) {
-        return [160, 50];
+        let screen = computer.getComponentByAddress(self.screen);
+        return screen.getResolution();
     }
 
     methods["setViewport"] = function(l) {

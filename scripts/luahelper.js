@@ -3,6 +3,9 @@ let luaHelper = {}
 luaHelper.toLuaValue = function(lua, object) {
     if (object === null || object === undefined) {
         return lua.createNil();
+    } else if (object instanceof Uint8Array) {
+        let str = new TextDecoder().decode(object);
+        return lua.createUTF8String(object);
     } else if (Array.isArray(object)) {
         let table = lua.createOrderedTable();
 

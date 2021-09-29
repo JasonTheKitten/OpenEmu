@@ -1,6 +1,11 @@
 // I may have made the mistake of using WebGL
 
 let Terminal = (function() {
+    const padding = 4;
+
+    const chwidth = 10;
+    const chheight = 18;
+
     function createRect(x, y, l, h, width, height, off, scale) {
         let rectVertices = [
             x, y,
@@ -75,8 +80,6 @@ let Terminal = (function() {
     }
 
     function Terminal(canvas, cols, rows) {
-        this.setSize(cols, rows, canvas)
-
         let image = document.getElementById("font");
         
         let webgl = canvas.getContext("webgl", {antialias: false, preserveDrawingBuffer: true});
@@ -84,6 +87,8 @@ let Terminal = (function() {
             throw "WebGL Initialization Failed!";
         }
         this.webgl = webgl;
+
+        this.setSize(cols, rows, canvas)
 
         webgl.viewport(0, 0, canvas.width, canvas.height);
 
@@ -131,10 +136,6 @@ let Terminal = (function() {
         let webgl = this.webgl;
 
         let scale = this.scale;
-        let padding = 4;
-
-        let chwidth = 10;
-        let chheight = 18;
 
         let char = chars.indexOf(ch.codePointAt(0));
 
@@ -158,18 +159,27 @@ let Terminal = (function() {
     };
 
     Terminal.prototype.setSize = function(cols, rows, canvas_) {
-        this.scale = 140/cols;
-        //this.scale = 80/cols;
-
-        //TODO: Calculate best scale
+        //TODO: Auto-resize with window size
 
         this.canvas = canvas_ || this.canvas;
         let canvas = this.canvas;
+
+        let containerWidth = this.canvas.parentElement.offsetWidth - 40;
+        let containerHeight = this.canvas.parentElement.offsetHeight - 40;
+        let normalWidth = cols * chwidth;
+        let normalHeight = rows * chheight;
+
+        let scaleX = containerWidth / normalWidth;
+        let scaleY = containerHeight / normalHeight;
+
+        this.scale = scaleX < scaleY ? scaleX : scaleY;
         
-        canvas.width = (cols * 10)*this.scale + 8;
-        canvas.height = (rows * 18)*this.scale + 8;
+        canvas.width = normalWidth*this.scale + padding*2;
+        canvas.height = normalHeight*this.scale + padding*2;
         canvas.clientWidth = canvas.width;
         canvas.clientHeight = canvas.height;
+
+        this.webgl.viewport(0, 0, canvas.width, canvas.height);
     }
 
     return Terminal;

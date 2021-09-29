@@ -93,7 +93,7 @@ let ComponentAPI = (function() {
             let addr = l.getStringParameter(1);
             let method = l.getStringParameter(2);
             let args = l.chop(3);
-
+            
             let device = getDevice(computer, addr);
             let methodF = device.getMethods(computer)[method];
             if (methodF == undefined) {

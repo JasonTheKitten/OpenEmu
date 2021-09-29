@@ -76,6 +76,21 @@ let Lua53 = (function() {
         lua53_m.ccall("lua_pushlstring", null, [n, s, n], [this.lua, this.string, len]);
     }
 
+    function UTF8String(lua, s) {
+        this.lua = lua;
+        this.string = s;
+    }
+
+    UTF8String.prototype.push = function() {
+        /*let stack = lua53_m.stackAlloc(this.string.length+1);
+        for (let i = 0; i < this.string.length; i++) {
+            stack[i] = this.string[i];
+        }
+        stack[this.string.length] = 0;
+        lua53_m.ccall("lua_pushlstring", null, [n, null, n], [this.lua, stack, this.string.length]);*/
+        lua53_m.ccall("lua_pushlstring", null, [n, "array", n], [this.lua, this.string, this.string.length]);
+    }
+
     function Table(lua) {
         this.lua = lua;
         this.values = {};
@@ -256,6 +271,10 @@ let Lua53 = (function() {
 
     Lua53.prototype.createString = function(s) {
         return new String(this.lua, s);
+    };
+
+    Lua53.prototype.createUTF8String = function(s) {
+        return new UTF8String(this.lua, s);
     };
 
     Lua53.prototype.createBoolean = function(b) {

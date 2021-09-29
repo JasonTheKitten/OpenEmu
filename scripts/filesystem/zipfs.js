@@ -50,7 +50,7 @@ zipFS.create = (function() {
         }
 
         this.handles[file] = this.handles[file] || {
-            contents: this.zip.file(file).asText(),
+            contents: new Uint8Array(this.zip.file(file).asArrayBuffer()),
             references: 0
         };
 
@@ -62,7 +62,7 @@ zipFS.create = (function() {
 
     ZipFS.prototype.read = function(ref, l) {
         let handle = this.refs[ref];
-        let content = this.handles[handle.file].contents.substring(handle.pointer, handle.pointer+l);
+        let content = this.handles[handle.file].contents.subarray(handle.pointer, handle.pointer+l);
         handle.pointer += l;
         return content;
     }
@@ -75,7 +75,7 @@ zipFS.create = (function() {
                 break;
 
             case "set":
-                handle.pointer = offset;
+                handle.pointer = offset-1;
                 break;
 
             case "end":
@@ -87,6 +87,16 @@ zipFS.create = (function() {
         }
 
         return handle.pointer;
+    }
+
+    ZipFS.prototype.getSize = function(file) {
+        file = shortenPath(file);
+
+        if (!this.zip.file(file)) {
+            return -1;
+        }
+
+        return this.zip.file(file).asArrayBuffer().length;
     }
 
     ZipFS.prototype.close = function(ref) {

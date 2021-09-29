@@ -58,8 +58,6 @@ UnicodeAPI.prototype.getMethods = function() {
     methods["sub"] = function(l) {
         let str = l.getStringParameter(1);
 
-        //console.log(str);
-
         let start = l.getIntegerParameter(2);
         if (start < 1) {
             start += [...str].length;
@@ -85,7 +83,7 @@ UnicodeAPI.prototype.getMethods = function() {
     }
 
     methods["isWide"] = function(l) {
-        let char = l.getStringParameter(1).getCharCodeAt(0);
+        let char = l.getStringParameter(1).charCodeAt(0);
         let isWide = charWidth(char) == 2;
 
         return [isWide];

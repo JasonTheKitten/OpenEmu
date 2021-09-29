@@ -32,7 +32,7 @@ ComputerAPI.prototype.getMethods = function(computer, arch) {
     }
 
     methods["maxEnergy"] = function(l) {
-        return [Infinity];
+        return [0];
     }
 
     methods["address"] = function(l) {
@@ -40,11 +40,11 @@ ComputerAPI.prototype.getMethods = function(computer, arch) {
     }
 
     methods["freeMemory"] = function(l) {
-        return [0];
+        return [524288];
     }
 
     methods["totalMemory"] = function(l) {
-        return [0];
+        return [524288];
     }
 
     methods["pushSignal"] = function(l) {

@@ -129,6 +129,10 @@ function TempFS() {
 
     }
 
+    TempFS.prototype.getSize = function(handle, content) {
+        return 0; //TODO
+    }
+
     TempFS.prototype.close = function(ref) {
         let file = this.refs[ref];
         if (!file) {
