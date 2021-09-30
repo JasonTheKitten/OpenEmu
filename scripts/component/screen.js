@@ -42,7 +42,7 @@ Screen.prototype.getMethodInfo = function() {
 
 /////
 Screen.prototype.set = function(x, y, text) {
-    if (y < 0) {
+    if (y < 0 || y > this.resolution[1]) {
         return;
     }
 
@@ -56,7 +56,7 @@ Screen.prototype.set = function(x, y, text) {
     }
 
     for (let i = 0; i < text.length; i++) {
-        if (x + i < 0) {
+        if (x + i < 0 || x + i > this.resolution[0]) {
             return;
         }
 

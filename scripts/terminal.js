@@ -3,27 +3,40 @@
 let Terminal = (function() {
     const padding = 4;
 
+    // TODO: More modular
     
     /*const chwidth = 6;
     const chheight = 9;
 
-    const off = 1
+    const offX = 1;
+    const offY = 1;
     const runX = 2;
     const runY = 2;
     
     let scaling = "NEAREST";*/
     
 
-    const chwidth = 10;
+    /*const chwidth = 10;
     const chheight = 18;
 
-    const off = 0;
-    const runX = 0
+    const offX = 0;
+    const offY = 0;
+    const runX = 0;
     const runY = 1;
 
-    let scaling = "LINEAR";
+    let scaling = "LINEAR";*/
 
-    const doLookup = true;
+    const chwidth = 8;
+    const chheight = 16;
+
+    const offX = 0;
+    const offY = 0;
+    const runX = 0;
+    const runY = 0;
+
+    let scaling = "NEAREST";
+
+    const doLookup = 2;
 
     function createRect(x, y, l, h, width, height, off, scale) {
         let rectVertices = [
@@ -162,25 +175,28 @@ let Terminal = (function() {
         let dx = char % 16;
         let dy = Math.floor(char/16);
 
-        if (doLookup) {
+        if (doLookup == 1) {
             char = chars.indexOf(char);
 
             if (char == -1) {
                 char = chars.indexOf(" ");
             }
 
-            dx = char % Math.floor(256/chwidth);
-            dy = Math.floor(char/Math.floor(256/chwidth));
+            dx = char % Math.floor((this.texture.width-offX)/chwidth);
+            dy = Math.floor(char/Math.floor((this.texture.width-offX)/chwidth));
+        } else if (doLookup == 2) {
+            dx = char % Math.floor((this.texture.width-offX)/chwidth);
+            dy = Math.floor(char/Math.floor((this.texture.width-offX)/chwidth));
+
+            //dx = 0;
+            //dy = 0x41;
         }
 
         let dest = createRect(padding + chwidth*(x-1)*scale, padding + chheight*(y-1)*scale, chwidth*scale, (chheight)*scale, this.canvas.width, this.canvas.height, -.5, 2);
         setAttrib(webgl, this.shape, this.vertexBuffer, dest);
 
-        //let sx = dx*chwidth;
-        //let sy = dy*(chheight+run);
-
-        let sx = off + dx * (chwidth + runX);
-        let sy = off + dy * (chheight + runY);
+        let sx = offX + dx * (chwidth + runX);
+        let sy = offY + dy * (chheight + runY);
 
         let src = createRect(sx, sy, chwidth, chheight, this.texture.width, this.texture.height, 0, 1);
         setAttrib(webgl, this.shape2, this.vertexBuffer2, src);
