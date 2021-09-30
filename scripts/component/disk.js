@@ -51,11 +51,7 @@ Disk.prototype.getMethods = function(computer) {
 
         //console.log(c);
 
-        if (c instanceof Uint8Array) {
-            return [c.length==0?undefined:c];
-        }
-        
-        return [c===""?undefined:c];
+        return [c.length==0?undefined:c];
     }
 
     methods["seek"] = function(l) {

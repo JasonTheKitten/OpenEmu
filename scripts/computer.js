@@ -80,9 +80,8 @@ let OCComputer = (function() {
 
     //requestAnimationFrame(frame);
 
-    // OC's default freeze time is 12.
-    // We go by the tick instead, because I'm too dumb to get the call budgets slow enough
-    setInterval(frame, /*12*/ 50);
+    // OC does budgets by the tick
+    setInterval(frame, 50);
 
     return OCComputer;
 })();

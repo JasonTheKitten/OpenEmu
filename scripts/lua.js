@@ -1,6 +1,7 @@
 let Lua53 = (function() {
     let n = "number";
     let s = "string";
+    let a = "array";
 
     let lua53_m = null;
     loader.queue(Lua53_m().then(l=>lua53_m=l));
@@ -82,13 +83,7 @@ let Lua53 = (function() {
     }
 
     UTF8String.prototype.push = function() {
-        /*let stack = lua53_m.stackAlloc(this.string.length+1);
-        for (let i = 0; i < this.string.length; i++) {
-            stack[i] = this.string[i];
-        }
-        stack[this.string.length] = 0;
-        lua53_m.ccall("lua_pushlstring", null, [n, null, n], [this.lua, stack, this.string.length]);*/
-        lua53_m.ccall("lua_pushlstring", null, [n, "array", n], [this.lua, this.string, this.string.length]);
+        lua53_m.ccall("lua_pushlstring", null, [n, a, n], [this.lua, this.string, this.string.length]);
     }
 
     function Table(lua) {
