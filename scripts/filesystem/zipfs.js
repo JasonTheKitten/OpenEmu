@@ -100,10 +100,13 @@ zipFS.create = (function() {
     }
 
     ZipFS.prototype.close = function(ref) {
+        if (this.refs[ref] === null || this.refs[ref] === undefined) {
+            return;
+        }
         let file = this.refs[ref].file;
         this.refs[ref] = null;
         this.handles[file].references--;
-        if (this.handles[file].references===0) {
+        if (this.handles[file].references === 0) {
             this.handles[file] = undefined;
         }
     }

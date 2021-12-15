@@ -15,10 +15,10 @@ window.onload = function() {
         computer.registerComponent(new Computer());
         computer.on();
 
-        registerKeyboardHandler(computer, canvas);
+        registerHandlers(computer, canvas, terminal);
     }).catch(e=>console.log(e));
 
-    function registerKeyboardHandler(computer, canvas) {
+    function registerHandlers(computer, canvas, terminal) {
         //TODO: Proper key codes
         canvas.addEventListener("keydown", e => {
             computer.queueSignal(["key_down", "keyboard1", extractChar(e), map(e.keyCode), "OpenEmu"]);
@@ -27,6 +27,25 @@ window.onload = function() {
         canvas.addEventListener("keyup", e => {
             computer.queueSignal(["key_up", "keyboard1", extractChar(e), map(e.keyCode), "OpenEmu"]);
             e.preventDefault();
+        });
+
+        let drag = false;
+        canvas.addEventListener("mousedown", e => {
+            drag = true;
+            let resolved = terminal.getCordsForEvent(e);
+            computer.queueSignal(["touch", "screen1", resolved[0], resolved[1], e.button, "OpenEmu"]);
+        });
+        canvas.addEventListener("mousemove", e => {
+            if (!drag) {
+                return;
+            }
+            let resolved = terminal.getCordsForEvent(e);
+            computer.queueSignal(["drag", "screen1", resolved[0], resolved[1], e.button, "OpenEmu"]);
+        });
+        canvas.addEventListener("mouseup", e => {
+            drag = false;
+            let resolved = terminal.getCordsForEvent(e);
+            computer.queueSignal(["drop", "screen1", resolved[0], resolved[1], e.button, "OpenEmu"]);
         });
     }
     

@@ -55,6 +55,18 @@ ComputerAPI.prototype.getMethods = function(computer, arch) {
         return ["disk2"];
     }
 
+    methods["users"] = function(l) {
+        return ["OpenEmu"];
+    }
+
+    methods["addUser"] = function(l) {
+        
+    }
+
+    methods["removeUser"] = function(l) {
+        
+    }
+
     methods["debug"] = function(l) {
         console.log(l.getStringParameter(1));
     }

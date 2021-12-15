@@ -233,5 +233,12 @@ let Terminal = (function() {
         this.webgl.viewport(0, 0, canvas.width, canvas.height);
     }
 
+    Terminal.prototype.getCordsForEvent = function(e) {
+        let posX = Math.ceil((e.offsetX/this.scale - padding) / chwidth);
+        let posY = Math.ceil((e.offsetY/this.scale - padding) / chheight);
+
+        return [posX, posY];
+    }
+
     return Terminal;
 })();

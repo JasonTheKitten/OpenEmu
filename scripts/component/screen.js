@@ -30,6 +30,10 @@ Screen.prototype.getMethods = function(computer) {
         
     }
 
+    methods["getAspectRatio"] = function(l) {
+        return [1, 1];
+    }
+
     return methods;
 }
 

@@ -22,6 +22,9 @@ let AceInstance = function() {
         vim.defineEx('quit', 'q', function(cm, input) {
             alert("You cannot quit");
         });
+        vim.defineEx('write', 'w', function(cm, input) {
+            alert("You cannot save");
+        });
     });
 
     this.editor = editor;

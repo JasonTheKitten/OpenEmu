@@ -127,6 +127,14 @@ Disk.prototype.getMethods = function(computer) {
         return [!self.filesystem.write];
     }
 
+    methods["spaceUsed"] = function(l) {
+        return [1];
+    }
+
+    methods["spaceTotal"] = function(l) {
+        return [1];
+    }
+
     return methods;
 }
 
